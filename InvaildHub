@@ -10,7 +10,6 @@ local selectABase;
 local AutoClickDropper;
 local WalkspeedSlider;
 local JumpPowerSlider;
-local selectAIsland;
 local toggleDoorCollide;
 
 local function toggleEsp(bool)
@@ -75,7 +74,7 @@ local function toggleEsp(bool)
 				end
 			until ehum or ehumrp
 
-			TextLabel.Text = target.Name.." | HP: "..math.floor(target:WaitForChild("Humanoid").Health).." | Studs: "..math.floor((player.Character:WaitForChild("HumanoidRootPart").Position - target:WaitForChild("HumanoidRootPart").Position).Magnitude)
+			TextLabel.Text = target.Name.." | HP: "..math.floor(ehum.Health).." | Studs: "..math.floor((humrp.Position - ehumrp.Position).Magnitude)
 		end)
 		TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		TextLabel.TextScaled = true
@@ -182,8 +181,6 @@ local Window = Rayfield:CreateWindow({
 
 local ETTab = Window:CreateTab("Elemental Tycoon", 4483362458)
 local NTNTab = Window:CreateTab("Nuke Tycoon Nuclear", 4483362458)
-local FTab = Window:CreateTab("Fisch", 4483362458)
-local ABDTab = Window:CreateTab("A Bizzare Adventure", 4483362458)
 local MiscTab = Window:CreateTab("Misc", 4483362458)
 
 local Label = ETTab:CreateLabel("MAY BE BUGGY")
@@ -271,60 +268,6 @@ JumpPowerSlider = MiscTab:CreateSlider({
 		 task.delay(0.1,function()
 			 ButtonDB = false
 		 end)
-	end,
- })
-
- local Section = FTab:CreateSection("teleport stuff")
-
- local islandList = {}
- if game.PlaceId == 16732694052 then
-	for _,v in pairs(workspace.world.spawns:GetChildren()) do
-		if v:IsA("Folder") and v:FindFirstChild("spawn") then
-			if v.Name == "TeleportDelay" then continue end
-			table.insert(islandList,v.Name)
-		end
-	end 
- end
-
- selectAIsland = FTab:CreateDropdown({
-	Name = "Select a Island",
-	Options = islandList,
-	CurrentOption = {"None"},
-	MultipleOptions = false,
-	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Options)
-		
-	end,
- })
-
- local teleportToIsland = FTab:CreateButton({
-	Name = "Teleport to Island",
-	Callback = function()
-		 local char = player.Character
- 
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-
-		 task.delay(0.1,function()
-			ButtonDB = false
-		end)
-
-		local islandFolder = workspace.world.spawns:FindFirstChild(selectAIsland.CurrentOption[1])
-		if islandFolder then
-			char.HumanoidRootPart.CFrame = islandFolder.spawn.CFrame
-		end
-	end,
- })
-
- local Section = FTab:CreateSection("setting stuff")
-
- local oxygenRemove = FTab:CreateToggle({
-	Name = "Oxygen Toggle",
-	CurrentValue = true,
-	Flag = "Toggle3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		player.Character.client.oxygen.Disabled = not Value
 	end,
  })
 
@@ -525,7 +468,6 @@ local tpToPowers = ETTab:CreateButton({
 		 elseif selectABase.CurrentOption[1] == "Volcano" then
 			player.Character.HumanoidRootPart.CFrame = CFrame.new( -820.199646, 347.196136, 329.985718)
 		 end
-		
 
 		 task.delay(0.1,function()
 			 ButtonDB = false
