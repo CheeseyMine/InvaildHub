@@ -430,6 +430,8 @@ local tpToPowers = ETTab:CreateButton({
 		 local Plane_Spawner = plrBase.PurchasedObjects:FindFirstChild("Plane_Spawner")
 		if Plane_Spawner then
 			player.Character.HumanoidRootPart.CFrame = Plane_Spawner.Korpi.Korpsii.HumanoidRootPart.CFrame * CFrame.new(0,0,-8)
+		else
+			warn("ERROR TELEPORTING TO PLANES: COULDN'T FIND IT!")
 		end
 		 task.delay(0.1,function()
 			 ButtonDB = false
