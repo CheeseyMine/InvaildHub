@@ -477,6 +477,23 @@ local tpToPowers = ETTab:CreateButton({
 	end,
  })
 
+ local tpToPlanes = NTNTab:CreateButton({
+	Name = "Teleport To Planes",
+	Callback = function()
+		 if not iswindowactive() then return end
+		 if ButtonDB then return end
+		 ButtonDB = true
+		 local plrBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:WaitForChild(player.Team.Name)
+		 local Plane_Spawner = plrBase.PurchasedObjects:FindFirstChild("Plane_Spawner")
+		if Plane_Spawner then
+			player.Character.HumanoidRootPart.CFrame = Plane_Spawner.Korpi.Korpsii.HumanoidRootPart.CFrame * CFrame.new(0,0,-8)
+		end
+		 task.delay(0.1,function()
+			 ButtonDB = false
+		 end)
+	end,
+ })
+
  local stealCashBonus = NTNTab:CreateButton({
 	Name = "Steal Cash Bonus",
 	Callback = function()
