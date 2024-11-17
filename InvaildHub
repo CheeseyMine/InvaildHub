@@ -11,6 +11,7 @@ local AutoClickDropper;
 local WalkspeedSlider;
 local JumpPowerSlider;
 local selectAIsland;
+local toggleDoorCollide;
 
 local function toggleEsp(bool)
 	local function createVisuals(target)
@@ -547,6 +548,55 @@ selectABase = NTNTab:CreateDropdown({
 	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Options)
 		
+	end,
+ })
+
+ local stopLoop = false
+ toggleDoorCollide = NTNTab:CreateToggle({
+	Name = "Toggle Door Collision",
+	CurrentValue = false,
+	Flag = "Toggle8", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value then
+			if stopLoop then
+				stopLoop = false
+			end
+			for _,v in pairs(workspace["The Nuke Tycoon Entirely Model"].Tycoons:GetChildren()) do
+				local getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
+				local getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
+				task.spawn(function ()
+					while task.wait() do
+						if stopLoop then
+							return
+						end
+						if getOwnerDoor then
+							getOwnerDoor.Left.CanCollide = false
+						else
+							getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
+						end
+						if getOfficeDoor then
+							getOfficeDoor.Left.CanCollide = false
+						else
+							getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
+						end
+					end
+				end)
+			end
+		else
+			stopLoop = true
+
+			for _,v in pairs(workspace["The Nuke Tycoon Entirely Model"].Tycoons:GetChildren()) do
+				local getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
+				local getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
+
+				if getOwnerDoor then
+					getOwnerDoor.Left.CanCollide = true
+				end
+				if getOfficeDoor then
+					getOfficeDoor.Left.CanCollide = true
+				end
+			end
+		end
 	end,
  })
 
