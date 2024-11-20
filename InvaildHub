@@ -11,6 +11,8 @@ local AutoClickDropper;
 local WalkspeedSlider;
 local JumpPowerSlider;
 local toggleDoorCollide;
+local toggleItemEsp;
+local toggleItemFarm;
 
 local function toggleEsp(bool)
 	local function createVisuals(target)
@@ -181,6 +183,7 @@ local Window = Rayfield:CreateWindow({
 
 local ETTab = Window:CreateTab("Elemental Tycoon", 4483362458)
 local NTNTab = Window:CreateTab("Nuke Tycoon Nuclear", 4483362458)
+local YBATab = Window:CreateTab("Your Bizzare Adventure", 4483362458)
 local MiscTab = Window:CreateTab("Misc", 4483362458)
 
 local Label = ETTab:CreateLabel("MAY BE BUGGY")
@@ -572,6 +575,91 @@ selectABase = NTNTab:CreateDropdown({
 		for _,v in pairs(workspace.RobbingFolder:GetDescendants()) do
 			if v:IsA("ProximityPrompt") then
 				v.HoldDuration = Value
+			end
+		end
+	end,
+ })
+
+ local Section = YBATab:CreateSection("cool stuff")
+
+ local function createItemVisual(tool)
+	task.wait(.3)
+
+	for _,v in pairs(tool:GetDescendants()) do
+		if v.Name == "ESP" then
+			v:Destroy()
+		end
+	end
+
+	local proxPrompt
+	for _,v in pairs(tool:GetChildren()) do
+		if v:IsA("ProximityPrompt") and v.Enabled == true then
+			proxPrompt = v
+			break
+		end
+	end 
+
+	local Overhead = Instance.new("BillboardGui")
+	local TextLabel = Instance.new("TextLabel")
+
+	Overhead.Parent = tool
+	Overhead.Name = "ESP"
+	Overhead.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	Overhead.Active = true
+	Overhead.Adornee = tool.PrimaryPart
+	Overhead.AlwaysOnTop = true
+	Overhead.LightInfluence = 1.000
+	Overhead.Size = UDim2.new(0, 400, 0, 30)
+	Overhead.StudsOffset = Vector3.new(0, 0, 0)
+
+	TextLabel.Parent = Overhead
+	TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel.BackgroundTransparency = 1.000
+	TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabel.BorderSizePixel = 0
+	TextLabel.Size = UDim2.new(1, 0, 1)
+	TextLabel.Font = Enum.Font.SourceSans
+	TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel.TextScaled = true
+	TextLabel.TextSize = 14.000
+	TextLabel.TextStrokeTransparency = 0.000
+	TextLabel.TextWrapped = true
+	pcall(function ()
+		TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude)
+	end)
+	task.spawn(function ()
+		repeat
+			task.wait()
+			pcall(function ()
+				TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude)
+			end)
+		until not Overhead:IsDescendantOf(tool)
+	end)
+ end
+
+ local childAddedConn_;
+ toggleItemEsp = YBATab:CreateToggle({
+	Name = "Toggle Item Esp",
+	CurrentValue = false,
+	Flag = "Toggle12", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value then
+			for _,v in pairs(workspace.Item_Spawns.Items:GetChildren()) do
+				task.spawn(createItemVisual,v)
+			end
+
+			childAddedConn_ = workspace.Item_Spawns.Items.ChildAdded:Connect(function (child)
+				task.spawn(createItemVisual,child)
+			end)
+		else
+			if childAddedConn_ then
+				childAddedConn_:Disconnect()
+			end
+
+			for _,v in pairs(workspace.Item_Spawns.Items:GetDescendants()) do
+				if v.Name == "ESP" then
+					v:Destroy()
+				end
 			end
 		end
 	end,
