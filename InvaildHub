@@ -628,12 +628,16 @@ selectABase = NTNTab:CreateDropdown({
 		TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude)
 	end)
 	task.spawn(function ()
-		repeat
-			task.wait()
-			pcall(function ()
-				TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude)
-			end)
-		until not Overhead:IsDescendantOf(tool)
+		pcall(function ()
+			repeat
+				task.wait()
+	
+				local humrp = player.Character:FindFirstChild("HumanoidRootPart")
+				if not humrp then continue end
+				TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - humrp.Position).Magnitude)
+	
+			until not Overhead:IsDescendantOf(tool)
+		end)
 	end)
  end
 
