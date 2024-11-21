@@ -11,6 +11,7 @@ local AutoClickDropper;
 local WalkspeedSlider;
 local JumpPowerSlider;
 local toggleDoorCollide;
+local toggleEasyFishBar;
 local toggleItemEsp;
 local toggleItemFarm;
 
@@ -184,6 +185,7 @@ local Window = Rayfield:CreateWindow({
 local ETTab = Window:CreateTab("Elemental Tycoon", 4483362458)
 local NTNTab = Window:CreateTab("Nuke Tycoon Nuclear", 4483362458)
 local YBATab = Window:CreateTab("Your Bizzare Adventure", 4483362458)
+local FTab = Window:CreateTab("Fisch", 4483362458)
 local MiscTab = Window:CreateTab("Misc", 4483362458)
 
 local Label = ETTab:CreateLabel("MAY BE BUGGY")
@@ -668,3 +670,90 @@ selectABase = NTNTab:CreateDropdown({
 		end
 	end,
  })
+
+local islandList = {}
+if game.PlaceId == 16732694052 then
+	for _,v in pairs(workspace.world.spawns:GetChildren()) do
+		if v:IsA("Folder") then
+			if v.Name ~= "TpSpots" or v.Name ~= "TeleportDelay" then
+				table.insert(islandList,v.Name)
+			end
+		end
+	end 
+end
+
+local Section = FTab:CreateSection("teleport stuff")
+
+local selectAIsland = FTab:CreateDropdown({
+	Name = "Select a Island",
+	Options = islandList,
+	CurrentOption = {"None"},
+	MultipleOptions = false,
+	Flag = "Dropdown3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Options)
+		
+	end,
+ })
+
+ local teleportToIsland = FTab:CreateButton({
+	Name = "TP To Selected Island",
+	Callback = function()
+		 if not iswindowactive() then return end
+		 if ButtonDB then return end
+		 ButtonDB = true
+		
+		 pcall(function ()
+			local getIsland = workspace.world.spawns:FindFirstChild(selectAIsland.CurrentOption[1])
+			if getIsland then
+				player.Character.HumanoidRootPart.CFrame = getIsland.spawn.CFrame
+			end
+		 end)
+
+		 task.delay(0.1,function()
+			 ButtonDB = false
+		 end)
+	end,
+ })
+
+ local Section = FTab:CreateSection("cool stuff")
+
+ local childAddedConn_2;
+ toggleEasyFishBar = FTab:CreateToggle({
+	Name = "Toggle Easy Fish Bar",
+	CurrentValue = false,
+	Flag = "Toggle10", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value then
+			childAddedConn_2 = player.PlayerGui.ChildAdded:Connect(function (child)
+				if child.Name == "reel" then
+					child.bar.playerbar.Size = UDim2.new(1, 0, 1.3, 0)
+				end
+			end)
+		else
+			if childAddedConn_2 then
+				childAddedConn_2:Disconnect()
+			end
+		end
+	end,
+ })
+
+ local characterAddedConn_
+ local toggleOxygen = FTab:CreateToggle({
+	Name = "Toggle Oxygen",
+	CurrentValue = true,
+	Flag = "Toggle12", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if not Value then
+			player.Character.client.oxygen.Disabled = true
+			characterAddedConn_ = player.CharacterAdded:Connect(function (char)
+				char.client.oxygen.Disabled = true
+			end)
+		else
+			player.Character.client.oxygen.Disabled = false
+			if characterAddedConn_ then
+				characterAddedConn_:Disconnect()
+			end
+		end
+	end,
+ })
+
