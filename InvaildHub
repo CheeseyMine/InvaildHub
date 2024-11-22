@@ -206,7 +206,7 @@ WalkspeedSlider = MiscTab:AddSlider({
 	end   
 })
 JumpPowerSlider = MiscTab:AddSlider({
-	Name = "Walkspeed",
+	Name = "JumpPower",
 	Min = 0,
 	Max = 200,
 	Default = 50,
