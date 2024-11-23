@@ -15,6 +15,9 @@ local toggleEasyFishBar;
 local toggleItemEsp;
 local toggleItemFarm;
 
+local library = loadstring(game:GetObjects("rbxassetid://7657867786")[1].Source)()
+local Wait = library.subs.Wait
+
 local function toggleEsp(bool)
 	local function createVisuals(target)
 		if target:FindFirstChild("ESP") then return end
@@ -111,7 +114,7 @@ local function toggleEsp(bool)
 				task.spawn(function ()
 					repeat
 						task.wait()
-					until not espToggle.CurrentValue
+					until not espToggle.Value
 					conn_:Disconnect()
 				end)
 			end
@@ -127,7 +130,7 @@ local function toggleEsp(bool)
 			task.spawn(function ()
 				repeat
 					task.wait()
-				until not espToggle.CurrentValue
+				until not espToggle.Value
 				conn_:Disconnect()
 				if conn_1 then
 					conn_1:Disconnect()
@@ -147,614 +150,670 @@ local function toggleEsp(bool)
 	end
 end
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
-local Window = Rayfield:CreateWindow({
-   Name = "Invaild Hub",
-   LoadingTitle = "Invaild",
-   LoadingSubtitle = "by InvaildPassw0rd",
-   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
-
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil, -- Create a custom folder for your hub/game
-      FileName = "Big Hub"
-   },
-
-   Discord = {
-      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
-      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-   },
-
-   KeySystem = false, -- Set this to true to use our key system
-   KeySettings = {
-      Title = "Untitled",
-      Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
-      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-   }
+local Window = library:CreateWindow({
+	Name = "Invaild Hub",
+	Themeable = {
+	Info = ""
+	}
 })
 
-local ETTab = Window:CreateTab("Elemental Tycoon", 4483362458)
-local NTNTab = Window:CreateTab("Nuke Tycoon Nuclear", 4483362458)
-local YBATab = Window:CreateTab("Your Bizzare Adventure", 4483362458)
-local FTab = Window:CreateTab("Fisch", 4483362458)
-local MiscTab = Window:CreateTab("Misc", 4483362458)
+local GeneralTab = Window:CreateTab({
+	Name = "General",
+})
 
-local Label = ETTab:CreateLabel("MAY BE BUGGY")
-local Section = ETTab:CreateSection("steal stuff")
+-- // General
 
-local Section = MiscTab:CreateSection("external stuff")
+local GeneralVisualSection = GeneralTab:CreateSection({
+	Name = "Visuals"
+})
 
-local enableAimbot = MiscTab:CreateButton({
-	Name = "Aimbot Script [MAY GIVE LAGSPIKE]",
-	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/ttwizz/Open-Aimbot/master/source.lua", true))()
-	end,
- })
-
- local Section = MiscTab:CreateSection("visual stuff")
-
- espToggle = MiscTab:CreateToggle({
-	Name = "Toggle Esp",
-	CurrentValue = false,
-	Flag = "Toggle3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+ espToggle = GeneralVisualSection:AddToggle({
+	Name = "ESP",
+	Flag = "VisualSection_Flag",
+	Value = false,
 	Callback = function(Value)
-		toggleEsp(Value)
-	end,
- })
+		pcall(function()
+			toggleEsp(Value)
+		end)
+	end
+})
 
- local Section = MiscTab:CreateSection("humanoid stuff")
+local GeneralHumanoidSection = GeneralTab:CreateSection({
+	Name = "Humanoid"
+})
 
-WalkspeedSlider = MiscTab:CreateSlider({
-	Name = "WalkSpeed",
-	Range = {1, 200},
-	Increment = 1,
-	Suffix = "",
-	CurrentValue = 16,
-	Flag = "Slider2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
+WalkspeedSlider = GeneralHumanoidSection:AddSlider({
+	Name = "Walkspeed",
+	Flag = "HumanoidSection_WalkspeedFlag",
+	Value = 16,
+	Min = 0,
+	Max = 350,
+})
 
-	end,
- })
-JumpPowerSlider = MiscTab:CreateSlider({
+JumpPowerSlider = GeneralHumanoidSection:AddSlider({
 	Name = "JumpPower",
-	Range = {1, 200},
-	Increment = 1,
-	Suffix = "",
-	CurrentValue = 50,
-	Flag = "Slider3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
+	Flag = "HumanoidSection_JumpPowerFlag",
+	Value = 50,
+	Min = 0,
+	Max = 200,
+})
 
-	end,
- })
-
- local setHumanoid = MiscTab:CreateButton({
+GeneralHumanoidSection:AddButton({
 	Name = "Set",
 	Callback = function()
-		 local char = player.Character
+		local char = player.Character
  
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
+		if not iswindowactive() then return end
+		if ButtonDB then return end
+		ButtonDB = true
+	   
+		pcall(function()
+			char.Humanoid.UseJumpPower = true
+
+			char.Humanoid.WalkSpeed = WalkspeedSlider.Get()
+			char.Humanoid.JumpPower = JumpPowerSlider.Get()
+		end)
 		
-		char.Humanoid.UseJumpPower = true
+		task.delay(0.1,function()
+			ButtonDB = false
+		end)
+	end
+})
 
-		 char.Humanoid.WalkSpeed = WalkspeedSlider.CurrentValue
-		 char.Humanoid.JumpPower = JumpPowerSlider.CurrentValue
-		 
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local resetHumanoid = MiscTab:CreateButton({
+GeneralHumanoidSection:AddButton({
 	Name = "Reset",
 	Callback = function()
-		 local char = player.Character
- 
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		
-		char.Humanoid.UseJumpPower = true
-
-		 char.Humanoid.WalkSpeed = 16
-		 char.Humanoid.JumpPower = 50
-		 
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
-local tpToChest = ETTab:CreateButton({
-   Name = "TP to Chest",
-   Callback = function()
 		local char = player.Character
-
+ 
 		if not iswindowactive() then return end
 		if ButtonDB then return end
 		ButtonDB = true
-		lastLocation = char.HumanoidRootPart.CFrame
-		for _,v in pairs(workspace.Treasure.Chests:GetChildren()) do
-			if v:IsA("Part") then
-				if not char:IsDescendantOf(workspace.Characters.Players) then continue end
-				char.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,0,-3)
+	   
+		pcall(function()
+			char.Humanoid.UseJumpPower = true
 
-				task.wait(.25)
-
-				local proxmity = v:WaitForChild("ProximityPrompt")
-				proxmity.RequiresLineOfSight = false
-				fireproximityprompt(proxmity)
-			end
-		end
-
-		char.HumanoidRootPart.CFrame = lastLocation
+			char.Humanoid.WalkSpeed = 16
+			char.Humanoid.JumpPower = 50
+		end)
 		
 		task.delay(0.1,function()
 			ButtonDB = false
 		end)
-   end,
+	end
 })
 
-local tpToCrate = ETTab:CreateButton({
-   Name = "TP to Crate",
-   Callback = function()
-		local char = player.Character
+-- // Elemental Tycoon
 
-		if not iswindowactive() then return end
-		if ButtonDB then return end
-		ButtonDB = true
-		lastLocation = char.HumanoidRootPart.CFrame
-		for _,v in pairs(workspace:GetChildren()) do
-			if v.Name == "BalloonCrate" then
-				if not char:IsDescendantOf(workspace.Characters.Players) then continue end
-				char.HumanoidRootPart.CFrame = v.Crate.CFrame * CFrame.new(0,0,5)
-
-				task.wait(.25)
-
-				local proxmity = v.Crate:WaitForChild("ProximityPrompt")
-				proxmity.RequiresLineOfSight = false
-				fireproximityprompt(proxmity)
+if game.GameId == 10253248401 then
+	local ETTab = Window:CreateTab({
+		Name = "Elemental Tycoon",
+	})
+	
+	local ETTeleportSection = ETTab:CreateSection({
+		Name = "Teleport"
+	})
+	
+	ETTeleportSection:AddButton({
+		Name = "TP to Chest",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			lastLocation = char.HumanoidRootPart.CFrame
+			for _,v in pairs(workspace.Treasure.Chests:GetChildren()) do
+				if v:IsA("Part") then
+					if not char:IsDescendantOf(workspace.Characters.Players) then continue end
+					char.HumanoidRootPart.CFrame = v.CFrame * CFrame.new(0,0,-3)
+	
+					task.wait(.25)
+	
+					local proxmity = v:WaitForChild("ProximityPrompt")
+					proxmity.RequiresLineOfSight = false
+					fireproximityprompt(proxmity)
+				end
 			end
+	
+			char.HumanoidRootPart.CFrame = lastLocation
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
 		end
-
-		char.HumanoidRootPart.CFrame = lastLocation
-		
-		task.delay(0.1,function()
-			ButtonDB = false
-		end)
-   end,
-})
-
-local tpToPowers = ETTab:CreateButton({
-	Name = "TP to all Powers [MAY NEED TO CLICK MORE THAN ONCE]",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		 lastLocation =  player.Character.HumanoidRootPart.CFrame
-		 for _,v in pairs(workspace.Tycoons:GetDescendants()) do
-			 if v:IsA("Model")  and string.find(v.Name,"Ability") then
-				if not v.Parent or v.Parent.Name ~= "Assets" or not v:FindFirstChild("Button") then continue end
-				local humrp = player.Character:FindFirstChild("HumanoidRootPart")
-				local toolBeingEquipped = v.Model.Center.SurfaceGui.TextLabel.Text
-				if not humrp then continue end
-				if player.Backpack:FindFirstChild(toolBeingEquipped) or player.Character:FindFirstChild(toolBeingEquipped) then continue end
-				humrp.CFrame = v.Button.CFrame
-				local proxmity = v.Button:WaitForChild("ProximityPrompt")
-				fireproximityprompt(proxmity)
-			 end
-		 end
- 
-		 player.Character.HumanoidRootPart.CFrame = lastLocation
-		 
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local grabAllDollars = ETTab:CreateButton({
-	Name = "Steal Dollars",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		 lastLocation =  player.Character.HumanoidRootPart.CFrame
-		 for _,v in pairs(workspace:GetDescendants()) do
-			if v:IsA("Part") and v.Name == "Dollar" then
-				local humrp = player.Character:FindFirstChild("HumanoidRootPart")
-				if not humrp then continue end
-				humrp.CFrame = v.CFrame
-				task.wait()
+	})
+	
+	ETTeleportSection:AddButton({
+		Name = "TP to Crate",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			lastLocation = char.HumanoidRootPart.CFrame
+			for _,v in pairs(workspace:GetChildren()) do
+				if v.Name == "BalloonCrate" then
+					if not char:IsDescendantOf(workspace.Characters.Players) then continue end
+					char.HumanoidRootPart.CFrame = v.Crate.CFrame * CFrame.new(0,0,5)
+	
+					task.wait(.25)
+	
+					local proxmity = v.Crate:WaitForChild("ProximityPrompt")
+					proxmity.RequiresLineOfSight = false
+					fireproximityprompt(proxmity)
+				end
 			end
-		 end
- 
-		 player.Character.HumanoidRootPart.CFrame = lastLocation
-		 
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local Section = NTNTab:CreateSection("teleportation stuff")
-
- local tpToGems = NTNTab:CreateButton({
-	Name = "Teleport To Gems",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		 for _,v in pairs(workspace.RobbingFolder:GetDescendants()) do
-			 if v:IsA("BoolValue") and v.Name == "Chosen" then
-				if v.Value and v.Parent.Name ~= player.Team.Name then
+	
+			char.HumanoidRootPart.CFrame = lastLocation
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+	
+	ETTeleportSection:AddButton({
+		Name = "TP to Powers",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			lastLocation = char.HumanoidRootPart.CFrame
+			for _,v in pairs(workspace.Tycoons:GetDescendants()) do
+				if v:IsA("Model")  and string.find(v.Name,"Ability") then
+				   if not v.Parent or v.Parent.Name ~= "Assets" or not v:FindFirstChild("Button") then continue end
+				   local humrp = player.Character:FindFirstChild("HumanoidRootPart")
+				   local toolBeingEquipped = v.Model.Center.SurfaceGui.TextLabel.Text
+				   if not humrp then continue end
+				   if player.Backpack:FindFirstChild(toolBeingEquipped) or player.Character:FindFirstChild(toolBeingEquipped) then continue end
+				   humrp.CFrame = v.Button.CFrame
+				   local proxmity = v.Button:WaitForChild("ProximityPrompt")
+				   fireproximityprompt(proxmity)
+				end
+			end
+	
+			char.HumanoidRootPart.CFrame = lastLocation
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+	
+	ETTeleportSection:AddButton({
+		Name = "Steal Dollars",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			lastLocation = char.HumanoidRootPart.CFrame
+			for _,v in pairs(workspace:GetDescendants()) do
+				if v:IsA("Part") and v.Name == "Dollar" then
 					local humrp = player.Character:FindFirstChild("HumanoidRootPart")
 					if not humrp then continue end
-					humrp.CFrame = v.Parent.CFrame
+					humrp.CFrame = v.CFrame
+					task.wait()
 				end
 			 end
-		 end
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local tpBackToBase = NTNTab:CreateButton({
-	Name = "Teleport Back To Base",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		 local plrBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:WaitForChild(player.Team.Name)
-		 player.Character.HumanoidRootPart.CFrame = plrBase.Essentials.Spawn.CFrame
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local tpToPlanes = NTNTab:CreateButton({
-	Name = "Teleport To Planes",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		 local plrBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:WaitForChild(player.Team.Name)
-		 local Plane_Spawner = plrBase.PurchasedObjects:FindFirstChild("Plane_Spawner")
-		if Plane_Spawner then
-			player.Character.HumanoidRootPart.CFrame = Plane_Spawner.Korpi.Korpsii.HumanoidRootPart.CFrame * CFrame.new(0,0,-8)
-		else
-			warn("ERROR TELEPORTING TO PLANES: COULDN'T FIND IT!")
-		end
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local stealCashBonus = NTNTab:CreateButton({
-	Name = "Steal Cash Bonus",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		
-		 lastLocation =  player.Character.HumanoidRootPart.CFrame
-		 player.Character.HumanoidRootPart.CFrame = CFrame.new( -820.199646, 347.196136, 329.985718)
-		 task.wait(0.1)
-		 player.Character.HumanoidRootPart.CFrame = lastLocation
-
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local teleportToSelectedBase = NTNTab:CreateButton({
-	Name = "TP To Selected Base",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		
-		 local getBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:FindFirstChild(selectABase.CurrentOption[1])
-		 if getBase then
-			player.Character.HumanoidRootPart.CFrame = getBase.Essentials.Spawn.CFrame
-		 elseif selectABase.CurrentOption[1] == "Volcano" then
-			player.Character.HumanoidRootPart.CFrame = CFrame.new( -820.199646, 347.196136, 329.985718)
-		 end
-
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local Section = NTNTab:CreateSection("cool stuff")
-
- local Label_2 = NTNTab:CreateLabel("MAY BE BUG OUT SCREEN / CLICKER MAY BREAK")
-
- AutoClickDropper = NTNTab:CreateToggle({
-	Name = "Auto Click Dropper",
-	CurrentValue = false,
-	Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		local plrBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:WaitForChild(player.Team.Name)
-		local detector = plrBase.PurchasedObjects.Mine.Clicker
-		if Value then
-			task.spawn(function ()
-				repeat
-					task.wait(1.5)
-					fireclickdetector(detector,99999)
-				until not AutoClickDropper.CurrentValue
+	
+			char.HumanoidRootPart.CFrame = lastLocation
+			
+			task.delay(0.1,function()
+				ButtonDB = false
 			end)
 		end
-	end,
- })
-
- local Section = NTNTab:CreateSection("setting stuff")
-
-selectABase = NTNTab:CreateDropdown({
-	Name = "Select a Base",
-	Options = {"Volcano","Base 1","Base 2","Base 3","Base 4","Base 5","Base 6"},
-	CurrentOption = {"Base 1"},
-	MultipleOptions = false,
-	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Options)
-		
-	end,
- })
-
- local stopLoop = false
- toggleDoorCollide = NTNTab:CreateToggle({
-	Name = "Toggle Door Collision",
-	CurrentValue = false,
-	Flag = "Toggle8", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value then
-			if stopLoop then
-				stopLoop = false
-			end
-			for _,v in pairs(workspace["The Nuke Tycoon Entirely Model"].Tycoons:GetChildren()) do
-				local getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
-				local getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
-				task.spawn(function ()
-					while task.wait() do
-						if stopLoop then
-							return
-						end
-						if getOwnerDoor then
-							getOwnerDoor.Left.CanCollide = false
-						else
-							getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
-						end
-						if getOfficeDoor then
-							getOfficeDoor.Left.CanCollide = false
-						else
-							getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
-						end
-					end
-				end)
-			end
-		else
-			stopLoop = true
-
-			for _,v in pairs(workspace["The Nuke Tycoon Entirely Model"].Tycoons:GetChildren()) do
-				local getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
-				local getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
-
-				if getOwnerDoor then
-					getOwnerDoor.Left.CanCollide = true
-				end
-				if getOfficeDoor then
-					getOfficeDoor.Left.CanCollide = true
-				end
-			end
-		end
-	end,
- })
-
- local stealGemDuration = NTNTab:CreateSlider({
-	Name = "Gem Steal Duration",
-	Range = {0, 5},
-	Increment = 1,
-	Suffix = "Seconds",
-	CurrentValue = 5,
-	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		for _,v in pairs(workspace.RobbingFolder:GetDescendants()) do
-			if v:IsA("ProximityPrompt") then
-				v.HoldDuration = Value
-			end
-		end
-	end,
- })
-
- local Section = YBATab:CreateSection("cool stuff")
-
- local function createItemVisual(tool)
-	task.wait(.3)
-
-	for _,v in pairs(tool:GetDescendants()) do
-		if v.Name == "ESP" then
-			v:Destroy()
-		end
-	end
-
-	local proxPrompt
-	for _,v in pairs(tool:GetChildren()) do
-		if v:IsA("ProximityPrompt") and v.Enabled == true then
-			proxPrompt = v
-			break
-		end
-	end 
-
-	local Overhead = Instance.new("BillboardGui")
-	local TextLabel = Instance.new("TextLabel")
-
-	Overhead.Parent = tool
-	Overhead.Name = "ESP"
-	Overhead.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-	Overhead.Active = true
-	Overhead.Adornee = tool.PrimaryPart
-	Overhead.AlwaysOnTop = true
-	Overhead.LightInfluence = 1.000
-	Overhead.Size = UDim2.new(0, 400, 0, 30)
-	Overhead.StudsOffset = Vector3.new(0, 0, 0)
-
-	TextLabel.Parent = Overhead
-	TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel.BackgroundTransparency = 1.000
-	TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	TextLabel.BorderSizePixel = 0
-	TextLabel.Size = UDim2.new(1, 0, 1)
-	TextLabel.Font = Enum.Font.SourceSans
-	TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel.TextScaled = true
-	TextLabel.TextSize = 14.000
-	TextLabel.TextStrokeTransparency = 0.000
-	TextLabel.TextWrapped = true
-	pcall(function ()
-		TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude)
-	end)
-	task.spawn(function ()
-		pcall(function ()
-			repeat
-				task.wait()
-	
-				local humrp = player.Character:FindFirstChild("HumanoidRootPart")
-				if not humrp then continue end
-				TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - humrp.Position).Magnitude)
-	
-			until not Overhead:IsDescendantOf(tool)
-		end)
-	end)
- end
-
- local childAddedConn_;
- toggleItemEsp = YBATab:CreateToggle({
-	Name = "Toggle Item Esp",
-	CurrentValue = false,
-	Flag = "Toggle12", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value then
-			for _,v in pairs(workspace.Item_Spawns.Items:GetChildren()) do
-				task.spawn(createItemVisual,v)
-			end
-
-			childAddedConn_ = workspace.Item_Spawns.Items.ChildAdded:Connect(function (child)
-				task.spawn(createItemVisual,child)
-			end)
-		else
-			if childAddedConn_ then
-				childAddedConn_:Disconnect()
-			end
-
-			for _,v in pairs(workspace.Item_Spawns.Items:GetDescendants()) do
-				if v.Name == "ESP" then
-					v:Destroy()
-				end
-			end
-		end
-	end,
- })
-
-local islandList = {}
-if game.PlaceId == 16732694052 then
-	for _,v in pairs(workspace.world.spawns:GetChildren()) do
-		if v:IsA("Folder") then
-			if v.Name ~= "TpSpots" or v.Name ~= "TeleportDelay" then
-				table.insert(islandList,v.Name)
-			end
-		end
-	end 
+	})
 end
 
-local Section = FTab:CreateSection("teleport stuff")
+-- // Nuke Tycoon Nuclear
 
-local selectAIsland = FTab:CreateDropdown({
-	Name = "Select a Island",
-	Options = islandList,
-	CurrentOption = {"None"},
-	MultipleOptions = false,
-	Flag = "Dropdown3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Options)
-		
-	end,
- })
-
- local teleportToIsland = FTab:CreateButton({
-	Name = "TP To Selected Island",
-	Callback = function()
-		 if not iswindowactive() then return end
-		 if ButtonDB then return end
-		 ButtonDB = true
-		
-		 pcall(function ()
-			local getIsland = workspace.world.spawns:FindFirstChild(selectAIsland.CurrentOption[1])
-			if getIsland then
-				player.Character.HumanoidRootPart.CFrame = getIsland.spawn.CFrame
-			end
-		 end)
-
-		 task.delay(0.1,function()
-			 ButtonDB = false
-		 end)
-	end,
- })
-
- local Section = FTab:CreateSection("cool stuff")
-
- local childAddedConn_2;
- toggleEasyFishBar = FTab:CreateToggle({
-	Name = "Toggle Easy Fish Bar",
-	CurrentValue = false,
-	Flag = "Toggle10", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value then
-			childAddedConn_2 = player.PlayerGui.ChildAdded:Connect(function (child)
-				if child.Name == "reel" then
-					task.wait(.25)
-					child.bar.playerbar.Size = UDim2.new(1, 0, 1.3, 0)
+if game.PlaceId == 7920018625 then
+	local NTNTab = Window:CreateTab({
+		Name = "Nuke Tycoon Nuclear",
+	})
+	
+	local NTNTeleportSection = NTNTab:CreateSection({
+		Name = "Teleport"
+	})
+	
+	NTNTeleportSection:AddButton({
+		Name = "Teleport To Gems",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			for _,v in pairs(workspace.RobbingFolder:GetDescendants()) do
+				if v:IsA("BoolValue") and v.Name == "Chosen" then
+				   if v.Value and v.Parent.Name ~= player.Team.Name then
+					   local humrp = player.Character:FindFirstChild("HumanoidRootPart")
+					   if not humrp then continue end
+					   humrp.CFrame = v.Parent.CFrame
+				   end
 				end
+			end
+			
+			task.delay(0.1,function()
+				ButtonDB = false
 			end)
-		else
-			if childAddedConn_2 then
-				childAddedConn_2:Disconnect()
+		end
+	})
+	
+	NTNTeleportSection:AddButton({
+		Name = "Teleport Back To Base",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			local plrBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:WaitForChild(player.Team.Name)
+			player.Character.HumanoidRootPart.CFrame = plrBase.Essentials.Spawn.CFrame
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+	
+	NTNTeleportSection:AddButton({
+		Name = "Teleport To Planes",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+	
+			local plrBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:WaitForChild(player.Team.Name)
+			local Plane_Spawner = plrBase.PurchasedObjects:FindFirstChild("Plane_Spawner")
+		   if Plane_Spawner then
+			   player.Character.HumanoidRootPart.CFrame = Plane_Spawner.Korpi.Korpsii.HumanoidRootPart.CFrame * CFrame.new(0,0,-8)
+		   else
+			   warn("ERROR TELEPORTING TO PLANES: COULDN'T FIND IT!")
+		   end
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+	
+	NTNTeleportSection:AddButton({
+		Name = "Steal Cash Bonus",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			
+			lastLocation =  player.Character.HumanoidRootPart.CFrame
+			player.Character.HumanoidRootPart.CFrame = CFrame.new( -820.199646, 347.196136, 329.985718)
+			task.wait(0.1)
+			player.Character.HumanoidRootPart.CFrame = lastLocation
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+	
+	NTNTeleportSection:AddButton({
+		Name = "Teleport to Selected Base",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			
+			local getBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:FindFirstChild(selectABase.Get())
+			if getBase then
+			   player.Character.HumanoidRootPart.CFrame = getBase.Essentials.Spawn.CFrame
+			elseif selectABase.Get() == "Volcano" then
+			   player.Character.HumanoidRootPart.CFrame = CFrame.new( -820.199646, 347.196136, 329.985718)
+			end
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+	
+	local NTNOtherSection = NTNTab:CreateSection({
+		Name = "Other"
+	})
+	
+	NTNOtherSection:AddToggle({
+		Name = "Toggle Click Dropper",
+		Flag = "NTNOtherSection_ClickDropper",
+		Callback = function(Value)
+			local plrBase = workspace["The Nuke Tycoon Entirely Model"].Tycoons:WaitForChild(player.Team.Name)
+			local detector = plrBase.PurchasedObjects.Mine.Clicker
+			if Value then
+				task.spawn(function ()
+					repeat
+						task.wait(1.5)
+						fireclickdetector(detector,99999)
+					until not AutoClickDropper.Get()
+				end)
 			end
 		end
-	end,
- })
-
- local characterAddedConn_
- local toggleOxygen = FTab:CreateToggle({
-	Name = "Toggle Oxygen",
-	CurrentValue = true,
-	Flag = "Toggle12", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if not Value then
-			player.Character.client.oxygen.Disabled = true
-			characterAddedConn_ = player.CharacterAdded:Connect(function (char)
-				char.client.oxygen.Disabled = true
-			end)
-		else
-			player.Character.client.oxygen.Disabled = false
-			if characterAddedConn_ then
-				characterAddedConn_:Disconnect()
+	})
+	
+	local stopLoop = false
+	toggleDoorCollide = NTNOtherSection:AddToggle({
+		Name = "Toggle Door Collision",
+		Flag = "DoorCollision_Flag",
+		Value = false,
+		Callback = function(Value)
+			if Value then
+				if stopLoop then
+					stopLoop = false
+				end
+				for _,v in pairs(workspace["The Nuke Tycoon Entirely Model"].Tycoons:GetChildren()) do
+					local getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
+					local getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
+					task.spawn(function ()
+						while task.wait() do
+							if stopLoop then
+								return
+							end
+							if getOwnerDoor then
+								getOwnerDoor.Left.CanCollide = false
+							else
+								getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
+							end
+							if getOfficeDoor then
+								getOfficeDoor.Left.CanCollide = false
+							else
+								getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
+							end
+						end
+					end)
+				end
+			else
+				stopLoop = true
+	
+				for _,v in pairs(workspace["The Nuke Tycoon Entirely Model"].Tycoons:GetChildren()) do
+					local getOwnerDoor = v.PurchasedObjects:FindFirstChild("OwnerDoor")
+					local getOfficeDoor = v.PurchasedObjects:FindFirstChild("OfficeDoor")
+	
+					if getOwnerDoor then
+						getOwnerDoor.Left.CanCollide = true
+					end
+					if getOfficeDoor then
+						getOfficeDoor.Left.CanCollide = true
+					end
+				end
 			end
 		end
-	end,
- })
+	})
+	
+	local NTNSettingSection = NTNTab:CreateSection({
+		Name = "Setting"
+	})
+	
+	selectABase = NTNSettingSection:AddDropdown({
+		Name = "Select a Base",
+		Flag = "NTNSettingSection_SelectABase",
+		Value = "Base 1",
+		List = {"Volcano","Base 1","Base 2","Base 3","Base 4","Base 5","Base 6"}
+	})
+	
+	NTNSettingSection:AddSlider({
+		Name = "Gem Steal Duration",
+		Flag = "NTNSettingSection_StealGemDuration",
+		Value = 5,
+		Min = 0,
+		Max = 5,
+		Callback = function(Value)
+			for _,v in pairs(workspace.RobbingFolder:GetDescendants()) do
+				if v:IsA("ProximityPrompt") then
+					v.HoldDuration = Value
+				end
+			end
+		end
+	})
+end
 
+-- // YBA
+
+if game.GameId == 2809202155 then
+	local YBATab = Window:CreateTab({
+		Name = "YBA",
+	})
+
+	local YBAVisualSection = YBATab:CreateSection({
+		Name = "Visuals"
+	})
+
+	local function createItemVisual(tool)
+		task.wait(.3)
+	
+		for _,v in pairs(tool:GetDescendants()) do
+			if v.Name == "ESP" then
+				v:Destroy()
+			end
+		end
+	
+		local proxPrompt
+		for _,v in pairs(tool:GetChildren()) do
+			if v:IsA("ProximityPrompt") and v.Enabled == true then
+				proxPrompt = v
+				break
+			end
+		end 
+	
+		local Overhead = Instance.new("BillboardGui")
+		local TextLabel = Instance.new("TextLabel")
+	
+		Overhead.Parent = tool
+		Overhead.Name = "ESP"
+		Overhead.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+		Overhead.Active = true
+		Overhead.Adornee = tool.PrimaryPart
+		Overhead.AlwaysOnTop = true
+		Overhead.LightInfluence = 1.000
+		Overhead.Size = UDim2.new(0, 400, 0, 30)
+		Overhead.StudsOffset = Vector3.new(0, 0, 0)
+	
+		TextLabel.Parent = Overhead
+		TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		TextLabel.BackgroundTransparency = 1.000
+		TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		TextLabel.BorderSizePixel = 0
+		TextLabel.Size = UDim2.new(1, 0, 1)
+		TextLabel.Font = Enum.Font.SourceSans
+		TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+		TextLabel.TextScaled = true
+		TextLabel.TextSize = 14.000
+		TextLabel.TextStrokeTransparency = 0.000
+		TextLabel.TextWrapped = true
+		pcall(function ()
+			TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - player.Character:WaitForChild("HumanoidRootPart").Position).Magnitude)
+		end)
+		task.spawn(function ()
+			pcall(function ()
+				repeat
+					task.wait()
+		
+					local humrp = player.Character:FindFirstChild("HumanoidRootPart")
+					if not humrp then continue end
+					TextLabel.Text = proxPrompt.ObjectText.." | Studs: "..math.floor((tool.PrimaryPart.Position - humrp.Position).Magnitude)
+		
+				until not Overhead:IsDescendantOf(tool)
+			end)
+		end)
+	 end
+
+	 local childAddedConn_;
+	 toggleItemEsp = YBAVisualSection:AddToggle({
+		 Name = "Toggle Item Esp",
+		 Flag = "Itemesp_Flag",
+		 Value = false,
+		 Callback = function(Value)
+			if Value then
+				for _,v in pairs(workspace.Item_Spawns.Items:GetChildren()) do
+					task.spawn(createItemVisual,v)
+				end
+	
+				childAddedConn_ = workspace.Item_Spawns.Items.ChildAdded:Connect(function (child)
+					task.spawn(createItemVisual,child)
+				end)
+			else
+				if childAddedConn_ then
+					childAddedConn_:Disconnect()
+				end
+	
+				for _,v in pairs(workspace.Item_Spawns.Items:GetDescendants()) do
+					if v.Name == "ESP" then
+						v:Destroy()
+					end
+				end
+			end
+		 end
+	 })
+end
+
+-- // Fisch
+
+if game.GameId == 5750914919 then
+	local FTab = Window:CreateTab({
+		Name = "Fisch",
+	})
+
+	local FischTeleportSection = FTab:CreateSection({
+		Name = "Visuals"
+	})
+
+	local FischSettingsSection = FTab:CreateSection({
+		Name = "Settings"
+	})
+
+	local islandList = {}
+	for _,v in pairs(workspace.world.spawns:GetChildren()) do
+		if v:IsA("Folder") then
+			if v.Name == "TeleportDelay" or v.Name == "TpSpots" then continue end
+			table.insert(islandList,v.Name)
+		end
+	end 
+		
+	local selectAIsland = FischSettingsSection:AddDropdown({
+		Name = "Select a Location",
+		Flag = "FischSettingsSection_SelectAIsland",
+		Value = "Moosewood",
+		List = islandList
+	})
+
+	local selectAIMerchant = FischSettingsSection:AddDropdown({
+		Name = "Select a Merchant",
+		Flag = "FischSettingsSection_selectAIMerchant",
+		Value = "Moosewood",
+		List = {"Moosewood","Forsaken Shores","Vertigo","Snowcap","The Depths","Desolate Deep","Sunstone"}
+	})
+
+	FischTeleportSection:AddButton({
+		Name = "Teleport to Selected Location",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			
+			pcall(function ()
+				local getIsland = workspace.world.spawns:FindFirstChild(selectAIsland.Get())
+				if getIsland then
+					player.Character.HumanoidRootPart.CFrame = getIsland.spawn.CFrame * CFrame.new(0,4.5,0)
+				end
+			 end)
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+
+	FischTeleportSection:AddButton({
+		Name = "Teleport to Selected Merchant",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			
+			pcall(function ()
+				local merchant = selectAIMerchant.Get()
+				if merchant == "Moosewood" then
+					char.HumanoidRootPart.CFrame = CFrame.new(464.311127, 150.62973, 230.48822)
+				elseif merchant == "Forsaken Shores" then
+					char.HumanoidRootPart.CFrame = CFrame.new(-2508.26758, 135.790741, 1577.14185)
+				elseif merchant == "Vertigo" then
+					char.HumanoidRootPart.CFrame = CFrame.new(-138.504807, -515.174377, 1135.73242)
+				elseif merchant == "Snowcap" then
+					char.HumanoidRootPart.CFrame = CFrame.new(2713.1272, 157.140839, 2377.79932)
+				elseif merchant == "The Depths" then
+					char.HumanoidRootPart.CFrame = CFrame.new(950.812866, -711.576111, 1265.45996)
+				elseif merchant == "Desolate Deep" then
+					char.HumanoidRootPart.CFrame = CFrame.new(-1659.4303, -213.979431, -2824.6084)
+				elseif merchant == "Sunstone" then
+					char.HumanoidRootPart.CFrame = CFrame.new(-928.85614, 131.078827, -1108.20117)
+				end
+			 end)
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+
+	local childAddedConn_2;
+	toggleEasyFishBar = FischSettingsSection:AddToggle({
+		Name = "Toggle Easy Fish Bar",
+		Flag = "ToggleEasyFishBar_Flag",
+		Value = false,
+		Callback = function(Value)
+			if Value then
+				childAddedConn_2 = player.PlayerGui.ChildAdded:Connect(function (child)
+					if child.Name == "reel" then
+						task.wait(.25)
+						child.bar.playerbar.Size = UDim2.new(1, 0, 1.3, 0)
+					end
+				end)
+			else
+				if childAddedConn_2 then
+					childAddedConn_2:Disconnect()
+				end
+			end
+		end
+	})
+
+	local characterAddedConn_;
+	local toggleOxygen = FischSettingsSection:AddToggle({
+		Name = "Toggle Oxygen",
+		Flag = "Oxygen_Flag",
+		Value = true,
+		Callback = function(Value)
+			if not Value then
+				player.Character.client.oxygen.Disabled = true
+				characterAddedConn_ = player.CharacterAdded:Connect(function (char)
+					char.client.oxygen.Disabled = true
+				end)
+			else
+				player.Character.client.oxygen.Disabled = false
+				if characterAddedConn_ then
+					characterAddedConn_:Disconnect()
+				end
+			end
+		end
+	})
+end
