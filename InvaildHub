@@ -702,15 +702,15 @@ if game.GameId == 5750914919 then
 		Name = "Settings"
 	})
 
-	if not player:GetAttribute("AlreadyLoad") then
-		player:SetAttribute("AlreadyLoaded",true)
+	if not player:GetAttribute("AlreadyLoaded_") then
+		player:SetAttribute("AlreadyLoaded_",true)
 
 		game:GetService("ReplicatedStorage").resources.replicated.merchant["Merchant Boat"].ModelStreamingMode = "Persistent"
 		lastLocation =  player.Character.HumanoidRootPart.CFrame
 
 		for _,v in pairs(workspace.world.spawns.TpSpots:GetChildren()) do
 			if v:IsA("Part") then
-				task.wait(0.01)
+				task.wait(0.025)
 
 				player.Character.HumanoidRootPart.CFrame = v.CFrame
 			
@@ -721,8 +721,6 @@ if game.GameId == 5750914919 then
 				end
 			end
 		end 
-
-		player.Character.HumanoidRootPart.CFrame = lastLocation
 	end
 
 	local islandList = {}
@@ -730,8 +728,24 @@ if game.GameId == 5750914919 then
 		if v:IsA("Folder") then
 			if v.Name == "TeleportDelay" or v.Name == "TpSpots" then continue end
 			table.insert(islandList,v.Name)
+
+			if not player:GetAttribute("AlreadyLoaded_") then
+				task.wait(0.025)
+
+				player.Character.HumanoidRootPart.CFrame = v:WaitForChild("spawn").CFrame
+			
+				for _,npc in pairs(workspace.world.npcs:GetChildren()) do
+					if npc:IsA("Model") then
+						npc.ModelStreamingMode = "Persistent"
+					end
+				end
+			end
 		end
 	end 
+
+	if lastLocation then
+		player.Character.HumanoidRootPart.CFrame = lastLocation
+	end
 
 	local selectAIsland = FischSettingsSection:AddDropdown({
 		Name = "Select a Location",
