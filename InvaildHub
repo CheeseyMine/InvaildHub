@@ -691,12 +691,39 @@ if game.GameId == 5750914919 then
 	})
 
 	local FischTeleportSection = FTab:CreateSection({
-		Name = "Visuals"
+		Name = "Teleport"
+	})
+
+	local FischOtherSection = FTab:CreateSection({
+		Name = "Other"
 	})
 
 	local FischSettingsSection = FTab:CreateSection({
 		Name = "Settings"
 	})
+
+	if not player:GetAttribute("AlreadyLoad") then
+		player:SetAttribute("AlreadyLoaded",true)
+
+		game:GetService("ReplicatedStorage").resources.replicated.merchant["Merchant Boat"].ModelStreamingMode = "Persistent"
+		lastLocation =  player.Character.HumanoidRootPart.CFrame
+
+		for _,v in pairs(workspace.world.spawns.TpSpots:GetChildren()) do
+			if v:IsA("Part") then
+				task.wait(0.01)
+
+				player.Character.HumanoidRootPart.CFrame = v.CFrame
+			
+				for _,npc in pairs(workspace.world.npcs:GetChildren()) do
+					if npc:IsA("Model") then
+						npc.ModelStreamingMode = "Persistent"
+					end
+				end
+			end
+		end 
+
+		player.Character.HumanoidRootPart.CFrame = lastLocation
+	end
 
 	local islandList = {}
 	for _,v in pairs(workspace.world.spawns:GetChildren()) do
@@ -705,7 +732,7 @@ if game.GameId == 5750914919 then
 			table.insert(islandList,v.Name)
 		end
 	end 
-		
+
 	local selectAIsland = FischSettingsSection:AddDropdown({
 		Name = "Select a Location",
 		Flag = "FischSettingsSection_SelectAIsland",
@@ -735,6 +762,64 @@ if game.GameId == 5750914919 then
 					player.Character.HumanoidRootPart.CFrame = getIsland.spawn.CFrame * CFrame.new(0,4.5,0)
 				end
 			 end)
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+
+	FischTeleportSection:AddButton({
+		Name = "Teleport to Traveling Merchant",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			
+			pcall(function ()
+				local getMerchant = workspace.world.npcs:FindFirstChild("Merchant Boat")
+				if getMerchant then
+					char.HumanoidRootPart.CFrame = getMerchant:WaitForChild("Travelling Merchant").HumanoidRootPart.CFrame 
+				end
+			 end)
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+
+	FischOtherSection:AddButton({
+		Name = "Sell Inventory [Won't sell rare stuff]",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			
+			local event = workspace.world.npcs["Mike Merchant"].merchant.sellall
+			event:InvokeServer()
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
+	})
+
+	FischOtherSection:AddButton({
+		Name = "Sell Hand",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+			
+			local event = workspace.world.npcs["Mike Merchant"].merchant.sell
+			event:InvokeServer()
 			
 			task.delay(0.1,function()
 				ButtonDB = false
