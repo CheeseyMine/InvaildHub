@@ -908,6 +908,7 @@ if game.GameId == 5750914919 then
 
 						if lastHumanoidPos then
 							player.Character.HumanoidRootPart.Position = lastHumanoidPos
+							lastHumanoidPos = nil
 						end
 					end
 				end)
