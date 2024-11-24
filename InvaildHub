@@ -702,8 +702,14 @@ if game.GameId == 5750914919 then
 		Name = "Settings"
 	})
 
+	lastLocation = player.Character.HumanoidRootPart.CFrame
+
 	game:GetService("ReplicatedStorage").resources.replicated.merchant["Merchant Boat"].ModelStreamingMode = "Persistent"
 	workspace.world.npcs["Marc Merchant"].ModelStreamingMode = "Persistent"
+
+	task.wait(0.01)
+
+	player.Character.HumanoidRootPart.CFrame = lastLocation
 	--[[
 	if not player:GetAttribute("AlreadyLoaded_") then
 		player:SetAttribute("AlreadyLoaded_",true)
@@ -745,10 +751,6 @@ if game.GameId == 5750914919 then
 			end]]
 		end
 	end 
-
-	if lastLocation then
-		player.Character.HumanoidRootPart.CFrame = lastLocation
-	end
 
 	local selectAIsland = FischSettingsSection:AddDropdown({
 		Name = "Select a Location",
@@ -817,7 +819,7 @@ if game.GameId == 5750914919 then
 			if ButtonDB then return end
 			ButtonDB = true
 			
-			local event = workspace.world.npcs["Mike Merchant"].merchant.sellall
+			local event = workspace.world.npcs["Marc Merchant"].merchant.sellall
 			event:InvokeServer()
 			
 			task.delay(0.1,function()
@@ -835,7 +837,7 @@ if game.GameId == 5750914919 then
 			if ButtonDB then return end
 			ButtonDB = true
 			
-			local event = workspace.world.npcs["Mike Merchant"].merchant.sell
+			local event = workspace.world.npcs["Marc Merchant"].merchant.sell
 			event:InvokeServer()
 			
 			task.delay(0.1,function()
