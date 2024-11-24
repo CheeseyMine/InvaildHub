@@ -1,3 +1,6 @@
+local GS = game:GetService("GuiService")
+local VIM = game:GetService("VirtualInputManager")
+
 local player = game.Players.LocalPlayer
 
 local ButtonDB = false
@@ -14,6 +17,9 @@ local toggleDoorCollide;
 local toggleEasyFishBar;
 local toggleItemEsp;
 local toggleItemFarm;
+local toggleAutoReel;
+local toggleAutoCast;
+local toggleAutoShake;
 
 local library = loadstring(game:GetObjects("rbxassetid://7657867786")[1].Source)()
 local Wait = library.subs.Wait
@@ -880,22 +886,107 @@ if game.GameId == 5750914919 then
 		end
 	})
 
-	local childAddedConn_2;
-	toggleEasyFishBar = FischSettingsSection:AddToggle({
-		Name = "Toggle Easy Fish Bar",
-		Flag = "ToggleEasyFishBar_Flag",
+	local autoReelConn_;
+	toggleAutoReel = FischSettingsSection:AddToggle({
+		Name = "Toggle Auto Reel",
+		Flag = "toggleAutoReel_Flag",
 		Value = false,
 		Callback = function(Value)
 			if Value then
-				childAddedConn_2 = player.PlayerGui.ChildAdded:Connect(function (child)
+				autoReelConn_ = player.PlayerGui.ChildAdded:Connect(function (child)
 					if child.Name == "reel" then
 						task.wait(.25)
 						child.bar.playerbar.Size = UDim2.new(1, 0, 1.3, 0)
+						child.bar.fish:GetPropertyChangedSignal("Position"):wait()
+						game.ReplicatedStorage.events.reelfinished:FireServer(100, true)
 					end
 				end)
 			else
-				if childAddedConn_2 then
-					childAddedConn_2:Disconnect()
+				if autoReelConn_ then
+					autoReelConn_:Disconnect()
+				end
+			end
+		end
+	})
+
+	local autoShakeConn_;
+	local autoShakeConn_2;
+	toggleAutoShake = FischSettingsSection:AddToggle({
+		Name = "Toggle Auto Shake",
+		Flag = "toggleAutoShake_Flag",
+		Value = false,
+		Callback = function(Value)
+			if Value then
+				autoShakeConn_ = player.PlayerGui.ChildAdded:Connect(function (child)
+					if child.Name == "shakeui" then
+						autoShakeConn_2 = child.safezone.ChildAdded:Connect(function (child)
+							if child.Name == "button" then
+								task.wait(0.3)
+								
+								GS.SelectedObject = child
+								VIM:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+								VIM:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+		
+								task.wait(250.1 - (172 + 78))
+								GS.SelectedObject = nil
+							end
+						end)
+					end
+				end)
+			else
+				if autoShakeConn_ then
+					autoShakeConn_:Disconnect()
+				end
+				if autoShakeConn_2 then
+					autoShakeConn_2:Disconnect()
+				end
+			end
+		end
+	})
+
+	local autoCastConn_;
+	local autoCastConn_2;
+	toggleAutoCast = FischSettingsSection:AddToggle({
+		Name = "Toggle Auto Cast",
+		Flag = "toggleAutoCast_Flag",
+		Value = false,
+		Callback = function(Value)
+			if Value then
+				local plrRod
+
+				for _,v in pairs(player.Character:GetChildren()) do
+					if v:IsA("Tool") and v.Name:lower():find("rod") then
+						plrRod = v
+					end
+				end
+
+				autoCastConn_ = player.Character.ChildAdded:Connect(function(child)
+					if child:IsA("Tool") and child.Name:lower():find("rod") then
+						plrRod = child
+					end
+				end)
+				autoCastConn_2 = player.Character.ChildRemoved:Connect(function(child)
+					if child:IsA("Tool") and child.Name:lower():find("rod") then
+						plrRod = nil
+					end
+				end)
+				
+				repeat
+					task.wait()
+					if not plrRod then continue end
+					local getValues = plrRod:FindFirstChild("values")
+					if not getValues then continue end
+					if not getValues.bite.Value and not getValues.casted.Value then
+						plrRod.events.cast:FireServer(58.5 + 42)
+					end
+
+				until not toggleAutoCast.Get()
+			else
+				if autoCastConn_ then
+					autoCastConn_:Disconnect()
+				end
+				if autoCastConn_2 then
+					autoCastConn_2:Disconnect()
 				end
 			end
 		end
