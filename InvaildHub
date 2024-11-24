@@ -708,6 +708,10 @@ if game.GameId == 5750914919 then
 		Name = "Settings"
 	})
 
+	local FischAutoFarmSection = FTab:CreateSection({
+		Name = "Auto Farm"
+	})
+
 	lastLocation = player.Character.HumanoidRootPart.CFrame
 
 	game:GetService("ReplicatedStorage").resources.replicated.merchant["Merchant Boat"].ModelStreamingMode = "Persistent"
@@ -886,8 +890,10 @@ if game.GameId == 5750914919 then
 		end
 	})
 
+	local lastHumanoidPos = nil;
+
 	local autoReelConn_;
-	toggleAutoReel = FischSettingsSection:AddToggle({
+	toggleAutoReel = FischAutoFarmSection:AddToggle({
 		Name = "Toggle Auto Reel",
 		Flag = "toggleAutoReel_Flag",
 		Value = false,
@@ -899,6 +905,10 @@ if game.GameId == 5750914919 then
 						child.bar.playerbar.Size = UDim2.new(1, 0, 1.3, 0)
 						child.bar.fish:GetPropertyChangedSignal("Position"):wait()
 						game.ReplicatedStorage.events.reelfinished:FireServer(100, true)
+
+						if lastHumanoidPos then
+							player.Character.HumanoidRootPart.Position = lastHumanoidPos
+						end
 					end
 				end)
 			else
@@ -911,7 +921,7 @@ if game.GameId == 5750914919 then
 
 	local autoShakeConn_;
 	local autoShakeConn_2;
-	toggleAutoShake = FischSettingsSection:AddToggle({
+	toggleAutoShake = FischAutoFarmSection:AddToggle({
 		Name = "Toggle Auto Shake",
 		Flag = "toggleAutoShake_Flag",
 		Value = false,
@@ -946,7 +956,7 @@ if game.GameId == 5750914919 then
 
 	local autoCastConn_;
 	local autoCastConn_2;
-	toggleAutoCast = FischSettingsSection:AddToggle({
+	toggleAutoCast = FischAutoFarmSection:AddToggle({
 		Name = "Toggle Auto Cast",
 		Flag = "toggleAutoCast_Flag",
 		Value = false,
@@ -977,6 +987,7 @@ if game.GameId == 5750914919 then
 					local getValues = plrRod:FindFirstChild("values")
 					if not getValues then continue end
 					if not getValues.bite.Value and not getValues.casted.Value then
+						lastHumanoidPos = player.Character.HumanoidRootPart.Position
 						plrRod.events.cast:FireServer(58.5 + 42)
 					end
 
@@ -989,6 +1000,15 @@ if game.GameId == 5750914919 then
 					autoCastConn_2:Disconnect()
 				end
 			end
+		end
+	})
+
+	FischAutoFarmSection:AddButton({
+		Name = "Anti-Afk",
+		Callback = function()
+			loadstring(
+                game:HttpGet("https://raw.githubusercontent.com/hassanxzayn-lua/Anti-afk/main/antiafkbyhassanxzyn")
+            )()
 		end
 	})
 
