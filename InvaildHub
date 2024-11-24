@@ -702,6 +702,9 @@ if game.GameId == 5750914919 then
 		Name = "Settings"
 	})
 
+	game:GetService("ReplicatedStorage").resources.replicated.merchant["Merchant Boat"].ModelStreamingMode = "Persistent"
+	workspace.world.npcs["Marc Merchant"].ModelStreamingMode = "Persistent"
+	--[[
 	if not player:GetAttribute("AlreadyLoaded_") then
 		player:SetAttribute("AlreadyLoaded_",true)
 
@@ -721,14 +724,14 @@ if game.GameId == 5750914919 then
 				end
 			end
 		end 
-	end
+	end]]
 
 	local islandList = {}
 	for _,v in pairs(workspace.world.spawns:GetChildren()) do
 		if v:IsA("Folder") then
 			if v.Name == "TeleportDelay" or v.Name == "TpSpots" then continue end
 			table.insert(islandList,v.Name)
-
+			--[[
 			if not player:GetAttribute("AlreadyLoaded_") then
 				task.wait(0.025)
 
@@ -739,7 +742,7 @@ if game.GameId == 5750914919 then
 						npc.ModelStreamingMode = "Persistent"
 					end
 				end
-			end
+			end]]
 		end
 	end 
 
