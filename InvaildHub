@@ -826,17 +826,17 @@ if game.GameId == 5750914919 then
 	FischOtherSection:AddButton({
 		Name = "Sell All Fishes",
 		Callback = function()
-			local char = player.Character
-	
 			if not iswindowactive() then return end
 			if ButtonDB then return end
 			ButtonDB = true
-			
-			local event = workspace.world.npcs["Marc Merchant"].merchant.sellall
-			event:InvokeServer()
-			
-			task.delay(0.1,function()
+
+			task.delay(0.4,function()
 				ButtonDB = false
+			end)
+
+			pcall(function()
+				local event = workspace.world.npcs["Marc Merchant"].merchant.sellall
+				event:InvokeServer()
 			end)
 		end
 	})
@@ -844,17 +844,17 @@ if game.GameId == 5750914919 then
 	FischOtherSection:AddButton({
 		Name = "Sell Holding",
 		Callback = function()
-			local char = player.Character
-	
 			if not iswindowactive() then return end
 			if ButtonDB then return end
 			ButtonDB = true
-			
-			local event = workspace.world.npcs["Marc Merchant"].merchant.sell
-			event:InvokeServer()
-			
-			task.delay(0.1,function()
+
+			task.delay(0.4,function()
 				ButtonDB = false
+			end)
+
+			pcall(function()
+				local event = workspace.world.npcs["Marc Merchant"].merchant.sell
+				event:InvokeServer()
 			end)
 		end
 	})
@@ -862,17 +862,15 @@ if game.GameId == 5750914919 then
 	FischOtherSection:AddButton({
 		Name = "Appraise Fish",
 		Callback = function()
-			local char = player.Character
-	
 			if not iswindowactive() then return end
 			if ButtonDB then return end
 			ButtonDB = true
-			
-			local event = workspace.world.npcs.Appraiser.appraiser.appraise
-			event:InvokeServer()
-			
-			task.delay(0.1,function()
+			task.delay(0.4,function()
 				ButtonDB = false
+			end)
+			pcall(function()
+				local event = workspace.world.npcs:WaitForChild("Appraiser").appraiser.appraise
+				event:InvokeServer()
 			end)
 		end
 	})
@@ -960,6 +958,11 @@ if game.GameId == 5750914919 then
 								VIM:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
 		
 								task.wait(250.1 - (172 + 78))
+								
+								if lastHumanoidPos then
+									player.Character.HumanoidRootPart.CFrame = lastHumanoidPos
+								end
+
 								GS.SelectedObject = nil
 							end
 						end)
