@@ -712,71 +712,89 @@ if game.GameId == 5750914919 then
 		Name = "Auto Farm"
 	})
 
-	lastLocation = player.Character.HumanoidRootPart.CFrame
-
-	player.Character.HumanoidRootPart.CFrame = workspace.world.spawns.Moosewood:WaitForChild("spawn").CFrame
-
-	game:GetService("ReplicatedStorage").resources.replicated.merchant["Merchant Boat"].ModelStreamingMode = "Persistent"
-	workspace.world.npcs["Marc Merchant"].ModelStreamingMode = "Persistent"
-	workspace.world.npcs.Appraiser.ModelStreamingMode = "Persistent"
-
-	task.wait(0.01)
-
-	player.Character.HumanoidRootPart.CFrame = lastLocation
-	--[[
-	if not player:GetAttribute("AlreadyLoaded_") then
-		player:SetAttribute("AlreadyLoaded_",true)
-
-		game:GetService("ReplicatedStorage").resources.replicated.merchant["Merchant Boat"].ModelStreamingMode = "Persistent"
-		lastLocation =  player.Character.HumanoidRootPart.CFrame
-
-		for _,v in pairs(workspace.world.spawns.TpSpots:GetChildren()) do
-			if v:IsA("Part") then
-				task.wait(0.025)
-
-				player.Character.HumanoidRootPart.CFrame = v.CFrame
-			
-				for _,npc in pairs(workspace.world.npcs:GetChildren()) do
-					if npc:IsA("Model") then
-						npc.ModelStreamingMode = "Persistent"
-					end
-				end
-			end
-		end 
-	end]]
-
-	local islandList = {}
-	for _,v in pairs(workspace.world.spawns:GetChildren()) do
-		if v:IsA("Folder") then
-			if v.Name == "TeleportDelay" or v.Name == "TpSpots" then continue end
-			table.insert(islandList,v.Name)
-			--[[
-			if not player:GetAttribute("AlreadyLoaded_") then
-				task.wait(0.025)
-
-				player.Character.HumanoidRootPart.CFrame = v:WaitForChild("spawn").CFrame
-			
-				for _,npc in pairs(workspace.world.npcs:GetChildren()) do
-					if npc:IsA("Model") then
-						npc.ModelStreamingMode = "Persistent"
-					end
-				end
-			end]]
-		end
-	end 
-
 	local selectAIsland = FischSettingsSection:AddDropdown({
 		Name = "Select a Location",
 		Flag = "FischSettingsSection_SelectAIsland",
 		Value = "Moosewood",
-		List = islandList
+		List = {"Moosewood","Mushgrove","Roslit","Snowcap","Sunstone","Terrapin","The Depths","Vertigo","Statue","Harvester's Spike","Brine","Desolate Deep","Keeper's Alter","Trident Room","The Arch","Desolate Deep Shop","End of Depth Maze","Forsaken Shores"}
 	})
 
 	local selectAIMerchant = FischSettingsSection:AddDropdown({
 		Name = "Select a Merchant",
-		Flag = "FischSettingsSection_selectAIMerchant",
+		Flag = "FischSettingsSection_selectAMerchant",
 		Value = "Moosewood",
-		List = {"Moosewood","Forsaken Shores","Vertigo","Snowcap","The Depths","Desolate Deep","Sunstone"}
+		List = {"Moosewood","Forsaken Shores","Vertigo","Snowcap","The Depths","Desolate Deep","Volcano","Uncharted","Sunstone","Desolate Deep Shop"}
+	})
+
+	local selectANpc = FischSettingsSection:AddDropdown({
+		Name = "Select a Merchant",
+		Flag = "FischSettingsSection_selectANpc",
+		Value = "Phineas",
+		List = {
+			"Phineas",
+			"Angler",
+			"Appraiser",
+			"Daisy",
+			"Moosewood Inn Keeper",
+			"Roslit Inn Keeper",
+			"Snowcap inn Keeper",
+			"Desolate Deep Inn Keeper",
+			"Forsaken Inn Keeper",
+			"Mod's Lantern Keeper",
+			"Pierre",
+			"Shipwright",
+			"Agaric",
+			"Alfie",
+			"Orc",
+			"Wilson",
+			"Kenith",
+			"Merlin",
+			"Caleia",
+			"Jack Marrow"
+		}
+	})
+
+	FischTeleportSection:AddButton({
+		Name = "Teleport to Selected NPC",
+		Callback = function()
+			local char = player.Character
+	
+			if not iswindowactive() then return end
+			if ButtonDB then return end
+			ButtonDB = true
+
+			local locationPos = {
+				["Phineas"] = CFrame.new(472.16119384765625, 150.693359375, 274.2929992675781),
+				["Angler"] = CFrame.new(480.1129150390625, 150.50100708007812, 298.4060363769531),
+				["Appraiser"] = CFrame.new(448.3273010253906, 150.5386962890625, 207.1830291748047),
+				["Daisy"] = CFrame.new(583.37890625, 165.49075317382812, 216.81448364257812),
+				["Moosewood Inn Keeper"] = CFrame.new(488.9857177734375, 150.70001220703125, 232.86424255371094),
+				["Roslit Inn Keeper"] = CFrame.new(-1509.99267578125, 133.00003051757812, 628.8194580078125),
+				["Snowcap Inn Keeper"] = CFrame.new(2663.392578125, 155.16500854492188, 2396.169189453125),
+				["Desolate Deep Inn Keeper"] = CFrame.new(-1655.33642578125, -214.18502807617188, -2831.457275390625),
+				["Forsaken Inn Keeper"] = CFrame.new(-2475.80029296875, 133.00003051757812, 1569.952392578125),
+				["Mod's Lantern Keeper"] = CFrame.new(-39.49514389038086, -246.5999755859375, 198.9759063720703),
+				["Pierre"] = CFrame.new(391.49237060546875, 135.3483428955078, 200.10107421875),
+				["Shipwright"] = CFrame.new(357.97259521484375, 133.615966796875, 258.154541015625),
+				["Agaric"] = CFrame.new(2594.98095703125, 132.67874145507812, -730.0322875976562),
+				["Alfie"] = CFrame.new(-1516.2005615234375, 141.5347900390625, 763.6912841796875),
+				["Orc"] = CFrame.new(-1847.372802734375, 165.7111358642578, 161.55313110351562),
+				["Wilson"] = CFrame.new(2937.43701171875, 280.78369140625, 2567.6845703125),
+				["Kenith"] = CFrame.new(-1146.0289306640625, 134.4999542236328, -1073.3331298828125),
+				["Merlin"] = CFrame.new(-931.6629638671875, 225.90130615234375, -993.1806030273438),
+				["Caleia"] = CFrame.new(981.6041259765625, 131.3201904296875, -1233.817138671875),
+				["Jack Marrow"] = CFrame.new(-2826.740966796875, 214.64915466308594, 1519.2017822265625),
+			}
+			
+			pcall(function ()
+				local getLocation = locationPos[selectANpc.Get()]
+				char.HumanoidRootPart.CFrame = getLocation
+			 end)
+			
+			task.delay(0.1,function()
+				ButtonDB = false
+			end)
+		end
 	})
 
 	FischTeleportSection:AddButton({
@@ -787,34 +805,33 @@ if game.GameId == 5750914919 then
 			if not iswindowactive() then return end
 			if ButtonDB then return end
 			ButtonDB = true
-			
-			pcall(function ()
-				local getIsland = workspace.world.spawns:FindFirstChild(selectAIsland.Get())
-				if getIsland then
-					player.Character.HumanoidRootPart.CFrame = getIsland.spawn.CFrame * CFrame.new(0,4.5,0)
-				end
-			 end)
-			
-			task.delay(0.1,function()
-				ButtonDB = false
-			end)
-		end
-	})
 
-	FischTeleportSection:AddButton({
-		Name = "Teleport to Traveling Merchant",
-		Callback = function()
-			local char = player.Character
-	
-			if not iswindowactive() then return end
-			if ButtonDB then return end
-			ButtonDB = true
+			local locationPos = {
+				["Brine"] = CFrame.new(-1794.11816, -142.862152, -3302.82104),
+				["Desolate Deep"] = CFrame.new(-1510.892333984375, -234.71023559570312, -2852.90966796875),
+				["Keeper's Alter"] = CFrame.new(1296.3203125, -805.2923583984375, -298.93670654296875),
+				["The Arch"] = CFrame.new(998.9654541015625, 131.32020568847656, -1237.12939453125),
+				["Desolate Deep Shop"] = CFrame.new(-978.800659, -244.911102, -2700.67529),
+				["End of Depth Maze"] = CFrame.new(1688.20068, -902.402039, 1441.45972),
+				["Forsaken Shores"] = CFrame.new(-2498.24585, 133.71489, 1624.8551),
+				["Moosewood"] = CFrame.new(383.101135, 131.240601, 243.933853),
+				["Mushgrove"] = CFrame.new(2501.45386, 130.999985, -720.717834),
+				["Roslit"] = CFrame.new(-1476.51611, 133.499969, 671.668884),
+				["Snowcap"] = CFrame.new(2649.0625, 142.283798, 2521.448),
+				["Harvester's Spike"] = CFrame.new(-1254.56738, 137.527222, 1554.79138),
+				["Statue"] = CFrame.new(72.8843689, 141.929962, -1028.41479),
+				["Sunstone"] = CFrame.new(-933.259705, 128.143951, -1119.52063),
+				["Terrapin"] = CFrame.new(-147.19691467285156, 145.21534729003906, 1911.84814453125),
+				["The Depths"] = CFrame.new(568.15271, -701.881104, 1230.8479),
+				["Trident Room"] = CFrame.new(-1479.49316, -225.710663, -2391.39355),
+				["Vertigo"] = CFrame.new(-112.007278, -515.2995, 1040.32788),
+				["Volcano"] = CFrame.new(-1888.5234375, 167.78240966796875, 329.2350158691406),
+				["Uncharted"] = CFrame.new(4011.312255859375, 136.99728393554688, 99.37255859375),
+			}
 			
 			pcall(function ()
-				local getMerchant = workspace.world.npcs:FindFirstChild("Merchant Boat")
-				if getMerchant then
-					char.HumanoidRootPart.CFrame = getMerchant:WaitForChild("Travelling Merchant").HumanoidRootPart.CFrame 
-				end
+				local getLocation = locationPos[selectAIsland.Get()]
+				char.HumanoidRootPart.CFrame = getLocation
 			 end)
 			
 			task.delay(0.1,function()
@@ -834,10 +851,8 @@ if game.GameId == 5750914919 then
 				ButtonDB = false
 			end)
 
-			pcall(function()
-				local event = workspace.world.npcs["Marc Merchant"].merchant.sellall
-				event:InvokeServer()
-			end)
+			local event = workspace.world.npcs["Marc Merchant"].merchant.sellall
+			event:InvokeServer()
 		end
 	})
 
@@ -852,10 +867,8 @@ if game.GameId == 5750914919 then
 				ButtonDB = false
 			end)
 
-			pcall(function()
-				local event = workspace.world.npcs["Marc Merchant"].merchant.sell
-				event:InvokeServer()
-			end)
+			local event = workspace.world.npcs["Marc Merchant"].merchant.sell
+			event:InvokeServer()
 		end
 	})
 
@@ -865,13 +878,13 @@ if game.GameId == 5750914919 then
 			if not iswindowactive() then return end
 			if ButtonDB then return end
 			ButtonDB = true
+
 			task.delay(0.4,function()
 				ButtonDB = false
 			end)
-			pcall(function()
-				local event = workspace.world.npcs:WaitForChild("Appraiser").appraiser.appraise
+
+			local event = workspace.world.npcs:WaitForChild("Appraiser").appraiser.appraise
 				event:InvokeServer()
-			end)
 		end
 	})
 
@@ -884,23 +897,20 @@ if game.GameId == 5750914919 then
 			if ButtonDB then return end
 			ButtonDB = true
 			
+			local locationPos = {
+				["Moosewood"] = CFrame.new(464.311127, 150.62973, 230.48822),
+				["Forsaken Shores"] = CFrame.new(-2508.26758, 135.790741, 1577.14185),
+				["Vertigo"] = CFrame.new(-138.504807, -515.174377, 1135.73242),
+				["Snowcap"] = CFrame.new(2713.1272, 157.140839, 2377.79932),
+				["The Depths"] = CFrame.new(950.812866, -711.576111, 1265.45996),
+				["Desolate Deep"] = CFrame.new(-1659.4303, -213.979431, -2824.6084),
+				["Desolate Deep Shop"] = CFrame.new(-981.0797119140625, -244.91098022460938, -2698.3544921875),
+				["Sunstone"] = CFrame.new(-928.85614, 131.078827, -1108.20117),
+			}
+
 			pcall(function ()
 				local merchant = selectAIMerchant.Get()
-				if merchant == "Moosewood" then
-					char.HumanoidRootPart.CFrame = CFrame.new(464.311127, 150.62973, 230.48822)
-				elseif merchant == "Forsaken Shores" then
-					char.HumanoidRootPart.CFrame = CFrame.new(-2508.26758, 135.790741, 1577.14185)
-				elseif merchant == "Vertigo" then
-					char.HumanoidRootPart.CFrame = CFrame.new(-138.504807, -515.174377, 1135.73242)
-				elseif merchant == "Snowcap" then
-					char.HumanoidRootPart.CFrame = CFrame.new(2713.1272, 157.140839, 2377.79932)
-				elseif merchant == "The Depths" then
-					char.HumanoidRootPart.CFrame = CFrame.new(950.812866, -711.576111, 1265.45996)
-				elseif merchant == "Desolate Deep" then
-					char.HumanoidRootPart.CFrame = CFrame.new(-1659.4303, -213.979431, -2824.6084)
-				elseif merchant == "Sunstone" then
-					char.HumanoidRootPart.CFrame = CFrame.new(-928.85614, 131.078827, -1108.20117)
-				end
+				char.HumanoidRootPart.CFrame = locationPos[merchant]
 			 end)
 			
 			task.delay(0.1,function()
