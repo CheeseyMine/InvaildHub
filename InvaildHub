@@ -716,14 +716,47 @@ if game.GameId == 5750914919 then
 		Name = "Select a Location",
 		Flag = "FischSettingsSection_SelectAIsland",
 		Value = "Moosewood",
-		List = {"Moosewood","Mushgrove","Roslit","Snowcap","Sunstone","Terrapin","The Depths","Vertigo","Statue","Harvester's Spike","Brine","Desolate Deep","Keeper's Alter","Trident Room","The Arch","Desolate Deep Shop","End of Depth Maze","Forsaken Shores"}
+		List = {
+			"Moosewood",
+			"Mushgrove",
+			"Roslit",
+			"Snowcap",
+			"Sunstone",
+			"Terrapin",
+			"The Depths",
+			"Vertigo",
+			"Statue",
+			"Uncharted",
+			"Ancient Isles",
+			"Crafting",
+			"Ancient Archive",
+			"Harvester's Spike",
+			"Brine",
+			"Desolate Deep",
+			"Keeper's Alter",
+			"Trident Room",
+			"The Arch",
+			"Desolate Deep Shop",
+			"End of Depth Maze",
+			"Forsaken Shores"
+		}
 	})
 
 	local selectAIMerchant = FischSettingsSection:AddDropdown({
 		Name = "Select a Merchant",
 		Flag = "FischSettingsSection_selectAMerchant",
 		Value = "Moosewood",
-		List = {"Moosewood","Forsaken Shores","Vertigo","Snowcap","The Depths","Desolate Deep","Volcano","Uncharted","Sunstone","Desolate Deep Shop"}
+		List = {
+			"Moosewood",
+			"Forsaken Shores",
+			"Ancient Isles",
+			"Vertigo","Snowcap",
+			"The Depths",
+			"Desolate Deep",
+			"Volcano",
+			"Sunstone",
+			"Desolate Deep Shop"
+		}
 	})
 
 	local selectANpc = FischSettingsSection:AddDropdown({
@@ -740,6 +773,7 @@ if game.GameId == 5750914919 then
 			"Snowcap inn Keeper",
 			"Desolate Deep Inn Keeper",
 			"Forsaken Inn Keeper",
+			"AncientIsle Inn Keeper",
 			"Mod's Lantern Keeper",
 			"Pierre",
 			"Shipwright",
@@ -750,7 +784,8 @@ if game.GameId == 5750914919 then
 			"Kenith",
 			"Merlin",
 			"Caleia",
-			"Jack Marrow"
+			"Jack Marrow",
+			"Chiseler",
 		}
 	})
 
@@ -772,6 +807,7 @@ if game.GameId == 5750914919 then
 				["Roslit Inn Keeper"] = CFrame.new(-1509.99267578125, 133.00003051757812, 628.8194580078125),
 				["Snowcap Inn Keeper"] = CFrame.new(2663.392578125, 155.16500854492188, 2396.169189453125),
 				["Desolate Deep Inn Keeper"] = CFrame.new(-1655.33642578125, -214.18502807617188, -2831.457275390625),
+				["AncientIsles Inn Keeper"] = CFrame.new(6044.849609375, 197.64480590820312, 334.3267822265625),
 				["Forsaken Inn Keeper"] = CFrame.new(-2475.80029296875, 133.00003051757812, 1569.952392578125),
 				["Mod's Lantern Keeper"] = CFrame.new(-39.49514389038086, -246.5999755859375, 198.9759063720703),
 				["Pierre"] = CFrame.new(391.49237060546875, 135.3483428955078, 200.10107421875),
@@ -784,6 +820,7 @@ if game.GameId == 5750914919 then
 				["Merlin"] = CFrame.new(-931.6629638671875, 225.90130615234375, -993.1806030273438),
 				["Caleia"] = CFrame.new(981.6041259765625, 131.3201904296875, -1233.817138671875),
 				["Jack Marrow"] = CFrame.new(-2826.740966796875, 214.64915466308594, 1519.2017822265625),
+				["Chiseler"] = CFrame.new(6083.68310546875, 194.98013305664062, 293.7948913574219),
 			}
 			
 			pcall(function ()
@@ -827,6 +864,9 @@ if game.GameId == 5750914919 then
 				["Vertigo"] = CFrame.new(-112.007278, -515.2995, 1040.32788),
 				["Volcano"] = CFrame.new(-1888.5234375, 167.78240966796875, 329.2350158691406),
 				["Uncharted"] = CFrame.new(4011.312255859375, 136.99728393554688, 99.37255859375),
+				["Ancient Isles"] = CFrame.new(6056.0048828125, 195.28012084960938, 278.5785827636719),
+				["Ancient Archive"] = CFrame.new(-3155.022216796875, -754.8182373046875, 2193.136962890625),
+				["Crafting"] = CFrame.new(-3160.040283203125, -747.223388671875, 1690.9775390625),
 			}
 			
 			pcall(function ()
@@ -906,6 +946,7 @@ if game.GameId == 5750914919 then
 				["Desolate Deep"] = CFrame.new(-1659.4303, -213.979431, -2824.6084),
 				["Desolate Deep Shop"] = CFrame.new(-981.0797119140625, -244.91098022460938, -2698.3544921875),
 				["Sunstone"] = CFrame.new(-928.85614, 131.078827, -1108.20117),
+				["Ancient Isles"] = CFrame.new(6076.65087890625, 194.98013305664062, 307.15045166015625),
 			}
 
 			pcall(function ()
